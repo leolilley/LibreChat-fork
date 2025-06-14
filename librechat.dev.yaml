@@ -132,7 +132,7 @@ actions:
 mcpServers:
   n8n-automation:
     type: sse
-    url: http://localhost:5678/mcp-test/a82503ac-def1-44fa-b99c-3abdf0dbc3e1/sse
+    url: http://localhost:5678/mcp-test/4845b20a-b37b-4b49-8d57-c8159c3031c2/sse
     timeout: 60000  # 1 minute timeout for this server
     name: "n8n Automation"
     description: "Connect to n8n workflows and automation"

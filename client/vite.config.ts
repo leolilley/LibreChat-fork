@@ -231,12 +231,8 @@ export default defineConfig(({ command }) => {
   resolve: {
     alias: {
       '~': path.join(__dirname, 'src/'),
-      $fonts: path.resolve(__dirname, 'public/fonts'),
+      $fonts: '/fonts',
     },
-  },
-  optimizeDeps: {
-    exclude: ['vite-plugin-node-polyfills/shims/buffer', 'vite-plugin-node-polyfills/shims/global', 'vite-plugin-node-polyfills/shims/process'],
-    force: true,
   },
   };
 });

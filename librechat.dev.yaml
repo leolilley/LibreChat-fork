@@ -128,33 +128,14 @@ actions:
     - "librechat.ai"
     - "google.com"
 
-# Example MCP Servers Object Structure
-# mcpServers:
-#   everything:
-#     # type: sse # type can optionally be omitted
-#     url: http://localhost:3001/sse
-#     timeout: 60000  # 1 minute timeout for this server, this is the default timeout for MCP servers.
-#   puppeteer:
-#     type: stdio
-#     command: npx
-#     args:
-#       - -y
-#       - "@modelcontextprotocol/server-puppeteer"
-#     timeout: 300000  # 5 minutes timeout for this server
-#   filesystem:
-#     # type: stdio
-#     command: npx
-#     args:
-#       - -y
-#       - "@modelcontextprotocol/server-filesystem"
-#       - /home/user/LibreChat/
-#     iconPath: /home/user/LibreChat/client/public/assets/logo.svg
-#   mcp-obsidian:
-#     command: npx
-#     args:
-#       - -y
-#       - "mcp-obsidian"
-#       - /path/to/obsidian/vault
+# MCP Servers Configuration
+mcpServers:
+  n8n-automation:
+    type: sse
+    url: http://localhost:5678/mcp-test/4845b20a-b37b-4b49-8d57-c8159c3031c2/sse
+    timeout: 60000  # 1 minute timeout for this server
+    name: "n8n Automation"
+    description: "Connect to n8n workflows and automation"
 
 # Definition of custom endpoints
 endpoints:

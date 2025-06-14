@@ -7,22 +7,25 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import type { Plugin } from 'vite';
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command }) => ({
-  server: {
-    host: 'localhost',
-    port: 3090,
-    strictPort: false,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3080',
-        changeOrigin: true,
-      },
-      '/oauth': {
-        target: 'http://localhost:3080',
-        changeOrigin: true,
+export default defineConfig(({ command }) => {
+  const proxyTarget = process.env.VITE_PROXY_TARGET || 'http://localhost:3080';
+  
+  return {
+    server: {
+      host: process.env.VITE_HOST || 'localhost',
+      port: 3090,
+      strictPort: false,
+      proxy: {
+        '/api': {
+          target: proxyTarget,
+          changeOrigin: true,
+        },
+        '/oauth': {
+          target: proxyTarget,
+          changeOrigin: true,
+        },
       },
     },
-  },
   // Set the directory where environment variables are loaded from and restrict prefixes
   envDir: '../',
   envPrefix: ['VITE_', 'SCRIPT_', 'DOMAIN_', 'ALLOW_'],
@@ -231,7 +234,8 @@ export default defineConfig(({ command }) => ({
       $fonts: path.resolve(__dirname, 'public/fonts'),
     },
   },
-}));
+  };
+});
 
 interface SourcemapExclude {
   excludeNodeModules?: boolean;

@@ -234,6 +234,10 @@ export default defineConfig(({ command }) => {
       $fonts: path.resolve(__dirname, 'public/fonts'),
     },
   },
+  optimizeDeps: {
+    exclude: ['vite-plugin-node-polyfills/shims/buffer', 'vite-plugin-node-polyfills/shims/global', 'vite-plugin-node-polyfills/shims/process'],
+    force: true,
+  },
   };
 });
 

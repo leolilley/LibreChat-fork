@@ -60,7 +60,7 @@
     "format": "npx prettier --write \"{,!(node_modules|venv)/**/}*.{js,jsx,ts,tsx}\"",
     "b:api": "NODE_ENV=production bun run api/server/index.js",
     "b:api-inspect": "NODE_ENV=production bun --inspect run api/server/index.js",
-    "b:api:dev": "NODE_ENV=production bun run --watch api/server/index.js",
+    "b:api:dev": "NODE_ENV=development bun run --watch api/server/index.js",
     "b:data": "cd packages/data-provider && bun run b:build",
     "b:mcp": "cd packages/api && bun run b:build",
     "b:data-schemas": "cd packages/data-schemas && bun run b:build",
@@ -141,5 +141,8 @@
       "admin/",
       "packages/"
     ]
+  },
+  "dependencies": {
+    "mongodb": "^6.17.0"
   }
 }

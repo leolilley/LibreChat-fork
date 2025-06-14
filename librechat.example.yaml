@@ -276,6 +276,30 @@ endpoints:
       forcePrompt: false
       modelDisplayLabel: 'Portkey'
       iconURL: https://images.crunchbase.com/image/upload/c_pad,f_auto,q_auto:eco,dpr_1/rjqy7ghvjoiu4cd1xjbf
+    - name: "DeepInfra"
+      apiKey: "${DEEPINFRA_API_KEY}"
+      baseURL: "https://api.deepinfra.com/v1/openai"
+      models:
+        default: [
+          "meta-llama/Meta-Llama-3.1-70B-Instruct",
+          "meta-llama/Meta-Llama-3.1-8B-Instruct",
+          "meta-llama/Llama-3.3-70B-Instruct",
+          "mistralai/Mixtral-8x7B-Instruct-v0.1",
+          "microsoft/WizardLM-2-8x22B",
+          "Qwen/Qwen2.5-72B-Instruct",
+          "deepseek-ai/DeepSeek-V3"
+        ]
+        fetch: true
+      titleConvo: true
+      titleModel: "meta-llama/Meta-Llama-3.1-8B-Instruct"
+      summarize: false
+      summaryModel: "meta-llama/Meta-Llama-3.1-8B-Instruct"
+      forcePrompt: false
+      modelDisplayLabel: "DeepInfra"
+      iconURL: "https://deepinfra.com/favicon.ico"
+      dropParams: [
+        "stop"
+      ]
 # fileConfig:
 #   endpoints:
 #     assistants:

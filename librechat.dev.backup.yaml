@@ -136,6 +136,8 @@ mcpServers:
     timeout: 60000  # 1 minute timeout for this server
     name: "n8n Automation"
     description: "Connect to n8n workflows and automation"
+    headers:
+      Authorization: "Bearer ${N8N_API_KEY}"
 
 # Definition of custom endpoints
 endpoints:

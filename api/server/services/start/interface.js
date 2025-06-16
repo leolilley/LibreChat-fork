@@ -49,6 +49,7 @@ async function loadDefaultInterface(config, configDefaults, roleName = SystemRol
     temporaryChat: interfaceConfig?.temporaryChat ?? defaults.temporaryChat,
     runCode: interfaceConfig?.runCode ?? defaults.runCode,
     webSearch: interfaceConfig?.webSearch ?? defaults.webSearch,
+    demoMode: interfaceConfig?.demoMode ?? defaults.demoMode,
     customWelcome: interfaceConfig?.customWelcome ?? defaults.customWelcome,
   });
 

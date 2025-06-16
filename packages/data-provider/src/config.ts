@@ -492,6 +492,7 @@ export const intefaceSchema = z
       .optional(),
     termsOfService: termsOfServiceSchema.optional(),
     customWelcome: z.string().optional(),
+    demoMode: z.boolean().optional(),
     endpointsMenu: z.boolean().optional(),
     modelSelect: z.boolean().optional(),
     parameters: z.boolean().optional(),
@@ -507,6 +508,7 @@ export const intefaceSchema = z
     webSearch: z.boolean().optional(),
   })
   .default({
+    demoMode: false,
     endpointsMenu: true,
     modelSelect: true,
     parameters: true,

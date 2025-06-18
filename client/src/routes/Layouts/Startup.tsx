@@ -46,12 +46,7 @@ export default function StartupLayout({ isAuthenticated }: { isAuthenticated?: b
     setHeaderText(null);
   }, [location.pathname]);
 
-  // If demo mode is enabled and config is loaded, redirect to demo route
-  useEffect(() => {
-    if (data?.interface?.demoMode && !isFetching && location.pathname !== '/demo') {
-      navigate('/demo', { replace: true });
-    }
-  }, [data?.interface?.demoMode, isFetching, location.pathname, navigate]);
+  // Demo mode redirect removed - now handled by DemoWrapper component
 
   const contextValue = {
     error,

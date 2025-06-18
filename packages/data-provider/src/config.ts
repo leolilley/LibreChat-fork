@@ -1328,6 +1328,10 @@ export enum SettingsTabValues {
    * Tab for Personalization Settings
    */
   PERSONALIZATION = 'personalization',
+  /**
+   * Tab for Integration Settings
+   */
+  INTEGRATIONS = 'integrations',
 }
 
 export enum STTProviders {

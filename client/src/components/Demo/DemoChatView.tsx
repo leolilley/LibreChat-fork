@@ -206,10 +206,11 @@ export default function DemoChatView() {
 
   // Handle automation pill click
   const handleAutomationClick = (automation: { id: string; name: string; icon: string }) => {
-    // Create a structured workflow execution message
+    // Create a structured workflow execution message with integration credentials
     const workflowMessage = `Execute automation: ${automation.id}
 Profession: ${selectedProfession}
 Task: ${automation.name}
+Required Integrations: ${getRequiredIntegrations(automation.id)}
 Parameters: {}`;
 
     console.log('Workflow execution request:', {
@@ -217,26 +218,70 @@ Parameters: {}`;
       profession: selectedProfession,
       automation: automation.id,
       name: automation.name,
+      requiredIntegrations: getRequiredIntegrations(automation.id),
       message: workflowMessage,
     });
 
     // In a real implementation, this would:
-    // 1. Send this message to the chat interface
-    // 2. The MCP server would receive and parse it
-    // 3. Route to the appropriate n8n workflow based on automation.id
-    // 4. Return streaming responses showing progress
+    // 1. Check if required integrations are connected
+    // 2. Send this message to the chat interface with user credentials
+    // 3. The MCP server would receive and parse it
+    // 4. Pass integration credentials to n8n workflow
+    // 5. Route to the appropriate n8n workflow based on automation.id
+    // 6. Return streaming responses showing progress
 
     // For demo purposes, show what the workflow execution would look like
+    const requiredIntegrations = getRequiredIntegrations(automation.id);
+    const integrationsList = requiredIntegrations.join(', ');
+
     alert(`🚀 Workflow Execution Request:
 
 Automation: ${automation.name}
 ID: ${automation.id}
 Profession: ${selectedProfession}
+Required Integrations: ${integrationsList}
 
-This would be sent to your n8n MCP server at:
-${window.location.origin}/mcp/n8n-automation
+This would:
+1. Check if you have ${integrationsList} connected in Integrations panel
+2. Send your encrypted credentials to n8n workflow
+3. Execute the automation with your authenticated services
+4. Return real-time progress updates
 
-The server would route this to the appropriate workflow based on the automation ID.`);
+n8n MCP Server: ${window.location.origin}/mcp/n8n-automation
+Workflow Endpoint: ${getWorkflowEndpoint(automation.id)}`);
+  };
+
+  // Helper function to determine required integrations for each automation
+  const getRequiredIntegrations = (automationId: string): string[] => {
+    const integrationMap: Record<string, string[]> = {
+      'social-posts': ['google', 'linkedin', 'twitter'],
+      'competitor-analysis': ['google', 'airtable'],
+      newsletter: ['gmail', 'mailchimp'],
+      'seo-optimizer': ['google'],
+      'csv-cleaner': ['google', 'dropbox'],
+      'report-generator': ['google', 'slack'],
+      'database-health': ['aws', 'slack'],
+      'ticket-prioritizer': ['zendesk', 'slack'],
+      'faq-generator': ['notion', 'zendesk'],
+      'sentiment-analysis': ['google', 'slack'],
+      'lead-scorer': ['salesforce', 'hubspot'],
+      'proposal-generator': ['google', 'salesforce'],
+      'resume-screener': ['google', 'linkedin'],
+      'interview-scheduler': ['calendar', 'zoom'],
+      'task-organizer': ['asana', 'trello'],
+      'timeline-generator': ['monday', 'google'],
+      'content-ideas': ['google', 'notion'],
+      'content-calendar': ['google', 'trello'],
+      'product-optimizer': ['shopify', 'google'],
+      'inventory-tracker': ['shopify', 'google'],
+    };
+
+    return integrationMap[automationId] || ['google'];
+  };
+
+  // Helper function to get n8n workflow webhook endpoint
+  const getWorkflowEndpoint = (automationId: string): string => {
+    return `http://localhost:5678/webhook/${automationId}`;
   };
 
   // Close dropdown on click away

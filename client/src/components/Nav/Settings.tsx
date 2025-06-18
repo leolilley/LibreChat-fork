@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
-import { MessageSquare, Command, DollarSign } from 'lucide-react';
+import { MessageSquare, Command, DollarSign, Plug } from 'lucide-react';
 import { SettingsTabValues } from 'librechat-data-provider';
 import { useGetStartupConfig } from '~/data-provider';
 import type { TDialogProps } from '~/common';
@@ -23,6 +23,7 @@ import {
   Account,
   Balance,
   Personalization,
+  Integrations,
 } from './SettingsTabs';
 import { useMediaQuery, useLocalize, TranslationKeys } from '~/hooks';
 import usePersonalizationAccess from '~/hooks/usePersonalizationAccess';
@@ -44,6 +45,7 @@ export default function Settings({ open, onOpenChange }: TDialogProps) {
       SettingsTabValues.COMMANDS,
       SettingsTabValues.SPEECH,
       ...(hasAnyPersonalizationFeature ? [SettingsTabValues.PERSONALIZATION] : []),
+      SettingsTabValues.INTEGRATIONS,
       SettingsTabValues.DATA,
       ...(startupConfig?.balance?.enabled ? [SettingsTabValues.BALANCE] : []),
       SettingsTabValues.ACCOUNT,
@@ -109,6 +111,11 @@ export default function Settings({ open, onOpenChange }: TDialogProps) {
           },
         ]
       : []),
+    {
+      value: SettingsTabValues.INTEGRATIONS,
+      icon: <Plug className="icon-sm" />,
+      label: 'com_nav_setting_integrations',
+    },
     {
       value: SettingsTabValues.DATA,
       icon: <DataIcon />,
@@ -250,6 +257,9 @@ export default function Settings({ open, onOpenChange }: TDialogProps) {
                         />
                       </Tabs.Content>
                     )}
+                    <Tabs.Content value={SettingsTabValues.INTEGRATIONS}>
+                      <Integrations />
+                    </Tabs.Content>
                     <Tabs.Content value={SettingsTabValues.DATA}>
                       <Data />
                     </Tabs.Content>

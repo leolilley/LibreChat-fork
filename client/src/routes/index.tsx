@@ -17,6 +17,7 @@ import ShareRoute from './ShareRoute';
 import ChatRoute from './ChatRoute';
 import Search from './Search';
 import Root from './Root';
+import DemoChatView from '~/components/Demo/DemoChatView';
 
 const AuthLayout = () => (
   <AuthContextProvider>
@@ -29,6 +30,11 @@ export const router = createBrowserRouter([
   {
     path: 'share/:shareId',
     element: <ShareRoute />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: 'demo',
+    element: <DemoChatView />,
     errorElement: <RouteErrorBoundary />,
   },
   {

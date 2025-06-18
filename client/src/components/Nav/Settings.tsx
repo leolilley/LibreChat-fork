@@ -207,6 +207,7 @@ export default function Settings({ open, onOpenChange }: TDialogProps) {
                   orientation="vertical"
                 >
                   <Tabs.List
+                    key="tabs-list"
                     aria-label="Settings"
                     className={cn(
                       'min-w-auto max-w-auto relative -ml-[8px] flex flex-shrink-0 flex-col flex-nowrap overflow-auto sm:max-w-none',
@@ -216,9 +217,9 @@ export default function Settings({ open, onOpenChange }: TDialogProps) {
                     )}
                     onKeyDown={handleKeyDown}
                   >
-                    {settingsTabs.map(({ value, icon, label }) => (
+                    {settingsTabs.map(({ value, icon, label }, idx) => (
                       <Tabs.Trigger
-                        key={value}
+                        key={`${value}-${idx}`}
                         className={cn(
                           'group relative z-10 m-1 flex items-center justify-start gap-2 rounded-xl px-2 py-1.5 transition-all duration-200 ease-in-out',
                           isSmallScreen
@@ -233,42 +234,57 @@ export default function Settings({ open, onOpenChange }: TDialogProps) {
                       </Tabs.Trigger>
                     ))}
                   </Tabs.List>
-                  <div className="overflow-auto sm:w-full sm:max-w-none md:pr-0.5 md:pt-0.5">
-                    <Tabs.Content value={SettingsTabValues.GENERAL}>
+                  <div
+                    key="tabs-contents-wrapper"
+                    className="overflow-auto sm:w-full sm:max-w-none md:pr-0.5 md:pt-0.5"
+                  >
+                    <Tabs.Content key={SettingsTabValues.GENERAL} value={SettingsTabValues.GENERAL}>
                       <General />
                     </Tabs.Content>
-                    <Tabs.Content value={SettingsTabValues.CHAT}>
+                    <Tabs.Content key={SettingsTabValues.CHAT} value={SettingsTabValues.CHAT}>
                       <Chat />
                     </Tabs.Content>
-                    <Tabs.Content value={SettingsTabValues.BETA}>
+                    <Tabs.Content key={SettingsTabValues.BETA} value={SettingsTabValues.BETA}>
                       <Beta />
                     </Tabs.Content>
-                    <Tabs.Content value={SettingsTabValues.COMMANDS}>
+                    <Tabs.Content
+                      key={SettingsTabValues.COMMANDS}
+                      value={SettingsTabValues.COMMANDS}
+                    >
                       <Commands />
                     </Tabs.Content>
-                    <Tabs.Content value={SettingsTabValues.SPEECH}>
+                    <Tabs.Content key={SettingsTabValues.SPEECH} value={SettingsTabValues.SPEECH}>
                       <Speech />
                     </Tabs.Content>
                     {hasAnyPersonalizationFeature && (
-                      <Tabs.Content value={SettingsTabValues.PERSONALIZATION}>
+                      <Tabs.Content
+                        key={SettingsTabValues.PERSONALIZATION}
+                        value={SettingsTabValues.PERSONALIZATION}
+                      >
                         <Personalization
                           hasMemoryOptOut={hasMemoryOptOut}
                           hasAnyPersonalizationFeature={hasAnyPersonalizationFeature}
                         />
                       </Tabs.Content>
                     )}
-                    <Tabs.Content value={SettingsTabValues.INTEGRATIONS}>
+                    <Tabs.Content
+                      key={SettingsTabValues.INTEGRATIONS}
+                      value={SettingsTabValues.INTEGRATIONS}
+                    >
                       <Integrations />
                     </Tabs.Content>
-                    <Tabs.Content value={SettingsTabValues.DATA}>
+                    <Tabs.Content key={SettingsTabValues.DATA} value={SettingsTabValues.DATA}>
                       <Data />
                     </Tabs.Content>
                     {startupConfig?.balance?.enabled && (
-                      <Tabs.Content value={SettingsTabValues.BALANCE}>
+                      <Tabs.Content
+                        key={SettingsTabValues.BALANCE}
+                        value={SettingsTabValues.BALANCE}
+                      >
                         <Balance />
                       </Tabs.Content>
                     )}
-                    <Tabs.Content value={SettingsTabValues.ACCOUNT}>
+                    <Tabs.Content key={SettingsTabValues.ACCOUNT} value={SettingsTabValues.ACCOUNT}>
                       <Account />
                     </Tabs.Content>
                   </div>

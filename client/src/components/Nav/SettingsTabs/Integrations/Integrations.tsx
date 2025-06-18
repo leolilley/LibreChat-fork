@@ -228,18 +228,26 @@ export default function Integrations() {
       {/* Available Services */}
       <div>
         <h4 className="mb-3 text-sm font-medium text-text-primary">Available Services</h4>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="flex flex-col gap-2">
           {['Google', 'Slack', 'GitHub', 'Notion', 'Airtable', 'Trello'].map((service) => (
-            <Button
+            <div
               key={service}
-              variant="outline"
-              size="sm"
-              onClick={handleAddIntegration}
-              className="h-auto flex-col gap-1 p-3"
+              className="flex items-center justify-between rounded-md border border-border-light bg-surface-secondary px-3 py-2"
             >
-              <div className="text-lg">🔗</div>
-              <span className="text-xs">{service}</span>
-            </Button>
+              <div className="flex items-center gap-2">
+                <span className="text-base">🔗</span>
+                <span className="text-sm font-medium text-text-primary">{service}</span>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleAddIntegration}
+                className="h-6 gap-1 px-2"
+              >
+                <Plus className="h-3 w-3" />
+                Connect
+              </Button>
+            </div>
           ))}
         </div>
       </div>

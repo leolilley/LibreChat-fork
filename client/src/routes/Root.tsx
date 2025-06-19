@@ -19,6 +19,7 @@ import { useUserTermsQuery, useGetStartupConfig } from '~/data-provider';
 import { Nav, MobileNav } from '~/components/Nav';
 import { useHealthCheck } from '~/data-provider';
 import { Banner } from '~/components/Banners';
+import DemoWrapper from '~/components/Demo/DemoWrapper';
 
 export default function Root() {
   const [showTerms, setShowTerms] = useState(false);
@@ -61,6 +62,11 @@ export default function Root() {
 
   if (!isAuthenticated) {
     return null;
+  }
+
+  // If demo mode is enabled, render only the demo wrapper
+  if (config?.interface?.demoMode) {
+    return <DemoWrapper />;
   }
 
   return (

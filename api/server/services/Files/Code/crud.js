@@ -1,8 +1,7 @@
+const axios = require('axios');
 const FormData = require('form-data');
 const { getCodeBaseURL } = require('@librechat/agents');
-const { createAxiosInstance, logAxiosError } = require('@librechat/api');
-
-const axios = createAxiosInstance();
+const { logAxiosError } = require('@librechat/api');
 
 const MAX_FILE_SIZE = 150 * 1024 * 1024;
 

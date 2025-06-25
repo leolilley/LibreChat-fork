@@ -22,7 +22,6 @@ const oauth = require('./oauth');
 const files = require('./files');
 const share = require('./share');
 const tags = require('./tags');
-const integrations = require('./integrations');
 const auth = require('./auth');
 const edit = require('./edit');
 const keys = require('./keys');
@@ -37,7 +36,6 @@ module.exports = {
   keys,
   user,
   tags,
-  integrations,
   roles,
   oauth,
   files,

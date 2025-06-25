@@ -6,9 +6,7 @@ const { CacheKeys } = require('librechat-data-provider');
 
 const { isEnabled } = require('~/server/utils');
 const { getLogStores } = require('~/cache');
-
-const Conversation = mongoose.models.Conversation;
-const Message = mongoose.models.Message;
+const { Message, Conversation } = require('~/db/models');
 
 const searchEnabled = isEnabled(process.env.SEARCH);
 const indexingDisabled = isEnabled(process.env.MEILI_NO_SYNC);

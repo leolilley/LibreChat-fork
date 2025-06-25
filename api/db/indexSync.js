@@ -1,3 +1,4 @@
+require('dotenv').config({ path: require('path').resolve(__dirname, '../..', '.env') });
 const mongoose = require('mongoose');
 const { MeiliSearch } = require('meilisearch');
 const { logger } = require('@librechat/data-schemas');
@@ -7,6 +8,33 @@ const { CacheKeys } = require('librechat-data-provider');
 const { isEnabled } = require('~/server/utils');
 const { getLogStores } = require('~/cache');
 const { Message, Conversation } = require('~/db/models');
+
+// Fallback implementation for missing getSyncProgress method
+if (!Message.getSyncProgress) {
+  Message.getSyncProgress = async function () {
+    const totalDocuments = await this.countDocuments();
+    const indexedDocuments = await this.countDocuments({ _meiliIndex: true });
+
+    return {
+      totalProcessed: indexedDocuments,
+      totalDocuments,
+      isComplete: indexedDocuments === totalDocuments,
+    };
+  };
+}
+
+if (!Conversation.getSyncProgress) {
+  Conversation.getSyncProgress = async function () {
+    const totalDocuments = await this.countDocuments();
+    const indexedDocuments = await this.countDocuments({ _meiliIndex: true });
+
+    return {
+      totalProcessed: indexedDocuments,
+      totalDocuments,
+      isComplete: indexedDocuments === totalDocuments,
+    };
+  };
+}
 
 const searchEnabled = isEnabled(process.env.SEARCH);
 const indexingDisabled = isEnabled(process.env.MEILI_NO_SYNC);

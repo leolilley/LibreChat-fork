@@ -93,12 +93,6 @@ const messageSchema: Schema<IMessage> = new Schema(
       default: undefined,
       required: false,
     },
-    _meiliIndex: {
-      type: Boolean,
-      required: false,
-      select: false,
-      default: false,
-    },
     files: { type: [{ type: mongoose.Schema.Types.Mixed }], default: undefined },
     plugin: {
       type: {

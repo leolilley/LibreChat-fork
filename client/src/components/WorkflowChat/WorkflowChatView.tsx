@@ -14,6 +14,7 @@ import ChatForm from '~/components/Chat/Input/ChatForm';
 import Landing from '~/components/Chat/Landing';
 import Header from '~/components/Chat/Header';
 import Footer from '~/components/Chat/Footer';
+import WorkflowAutomationPanel from './WorkflowAutomationPanel';
 import { buildTree, cn } from '~/utils';
 import { Spinner } from '~/components/svg';
 import store from '~/store';
@@ -68,28 +69,36 @@ function WorkflowChatView({ index = 0 }: { index?: number }) {
   } else if ((isLoading || isNavigating) && !isLandingPage) {
     content = <LoadingSpinner />;
   } else if (!isLandingPage) {
-    content = <MessagesView messagesTree={messagesTree} />;
-  } else {
-    // For now, show a simple landing message - we'll enhance this in Phase 2
+    // Show automation panel with conversation sidebar
     content = (
-      <div className="flex flex-1 items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-semibold mb-4">Workflow Chat</h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-8">
-            Welcome to Workflow Chat! This is a placeholder for the automation interface.
-          </p>
-          <div className="bg-surface-primary-alt p-6 rounded-lg">
-            <h2 className="text-lg font-medium mb-4">Coming Soon:</h2>
-            <ul className="text-left space-y-2">
-              <li>• Button-based workflow automation</li>
-              <li>• n8n workflow integration</li>
-              <li>• Smart parameter collection</li>
-              <li>• Real-time execution progress</li>
-            </ul>
-          </div>
+      <div className="flex h-full">
+        <div className="flex-1">
+          <WorkflowAutomationPanel />
         </div>
+        {/* Show recent messages in a sidebar */}
+        {messagesTree && messagesTree.length > 0 && (
+          <div className="w-80 border-l border-border-light bg-surface-secondary p-4 overflow-y-auto">
+            <h3 className="font-medium text-text-primary mb-3">Conversation</h3>
+            <div className="space-y-2 text-sm">
+              {messagesTree.slice(-3).map((message, index) => (
+                <div key={message.messageId || index} className="p-2 rounded bg-surface-primary">
+                  <div className="font-medium text-xs text-text-secondary mb-1">
+                    {message.isCreatedByUser ? 'You' : 'Assistant'}
+                  </div>
+                  <div className="text-text-primary">
+                    {message.text?.slice(0, 150)}
+                    {message.text && message.text.length > 150 && '...'}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
+  } else {
+    // Landing page - show automation panel
+    content = <WorkflowAutomationPanel />;
   }
 
   return (
@@ -98,25 +107,19 @@ function WorkflowChatView({ index = 0 }: { index?: number }) {
         <AddedChatContext.Provider value={addedChatHelpers}>
           <Presentation>
             <div className="flex h-full w-full flex-col">
-              {!isLoading && <Header />}
+              {!isLoading && (
+                <Header />
+              )}
               <>
                 <div
                   className={cn(
                     'flex flex-col',
                     isLandingPage
-                      ? 'flex-1 items-center justify-end sm:justify-center'
+                      ? 'flex-1'
                       : 'h-full overflow-y-auto',
                   )}
                 >
                   {content}
-                  <div
-                    className={cn(
-                      'w-full',
-                      isLandingPage && 'max-w-3xl transition-all duration-200 xl:max-w-4xl',
-                    )}
-                  >
-                    <ChatForm index={index} />
-                  </div>
                 </div>
               </>
               <Footer />

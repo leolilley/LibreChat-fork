@@ -6,6 +6,8 @@ import type { Template } from '~/data-provider/Templates/types';
 
 interface WorkflowLibraryViewProps {
   onWorkflowSelect: (workflow: Template) => void;
+  showHeader?: boolean;
+  refreshTrigger?: number;
 }
 
 const WorkflowCard = memo(({ 
@@ -64,48 +66,69 @@ const WorkflowCard = memo(({
 
 WorkflowCard.displayName = 'WorkflowCard';
 
-const WorkflowLibraryView = memo(({ onWorkflowSelect }: WorkflowLibraryViewProps) => {
+const WorkflowLibraryView = memo(({ onWorkflowSelect, showHeader = true, refreshTrigger = 0 }: WorkflowLibraryViewProps) => {
   const [workflows, setWorkflows] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [workflowsPerPage] = useState(12); // Show 12 workflows per page
 
-  // Get most popular tags from workflows (limit to top 8)
-  const tagCounts = workflows
-    .flatMap(w => w.tags)
-    .filter(tag => tag.length > 0)
-    .reduce((acc, tag) => {
-      acc[tag] = (acc[tag] || 0) + 1;
+  // Get all unique categories from workflows
+  const categoryCounts = workflows
+    .flatMap(w => w.categories)
+    .filter(cat => cat && cat.name)
+    .reduce((acc, cat) => {
+      acc[cat.name] = (acc[cat.name] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-  const popularTags = Object.entries(tagCounts)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 8) // Show only top 8 most popular tags
-    .map(([tag]) => tag);
+  const availableCategories = Object.entries(categoryCounts)
+    .sort(([,a], [,b]) => b - a) // Sort by count descending
+    .map(([name, count]) => ({ name, count }));
 
   const filteredWorkflows = workflows.filter(workflow => {
     const matchesSearch = !searchTerm || 
       workflow.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       workflow.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesTags = selectedTags.length === 0 || 
-      selectedTags.some(tag => workflow.tags.includes(tag));
+    const matchesCategories = selectedCategories.length === 0 || 
+      selectedCategories.some(catName => 
+        workflow.categories.some(cat => cat.name === catName)
+      );
     
-    return matchesSearch && matchesTags;
+    return matchesSearch && matchesCategories;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredWorkflows.length / workflowsPerPage);
+  const startIndex = (currentPage - 1) * workflowsPerPage;
+  const endIndex = startIndex + workflowsPerPage;
+  const currentWorkflows = filteredWorkflows.slice(startIndex, endIndex);
+
+  // Reset to page 1 when search/filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategories]);
 
   useEffect(() => {
     loadAllWorkflows();
   }, []);
 
+  // Refresh when refreshTrigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      loadAllWorkflows();
+    }
+  }, [refreshTrigger]);
+
   const loadAllWorkflows = async () => {
     setLoading(true);
     try {
-      // Get all workflows directly
-      const allWorkflows = await indexedTemplateService.getAllTemplates(1000);
+      // Get all workflows directly (no limit)
+      const allWorkflows = await indexedTemplateService.getAllTemplates();
       
       console.log('Loaded workflows:', allWorkflows.length, 'workflows');
       console.log('Sample workflow tags:', allWorkflows[0]?.tags);
@@ -156,18 +179,19 @@ const WorkflowLibraryView = memo(({ onWorkflowSelect }: WorkflowLibraryViewProps
     }
   };
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
+  const toggleCategory = (categoryName: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(categoryName) 
+        ? prev.filter(c => c !== categoryName)
+        : [...prev, categoryName]
     );
   };
 
   return (
     <div className="relative space-y-6">
       {/* Header with Sync Button */}
-      <div className="flex items-center justify-between">
+      {showHeader && (
+        <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button
             onClick={handleSync}
@@ -199,6 +223,7 @@ const WorkflowLibraryView = memo(({ onWorkflowSelect }: WorkflowLibraryViewProps
           {filteredWorkflows.length} of {workflows.length} workflows
         </div>
       </div>
+      )}
 
       {/* Search and Filters */}
       <div className="space-y-4">
@@ -213,22 +238,22 @@ const WorkflowLibraryView = memo(({ onWorkflowSelect }: WorkflowLibraryViewProps
           />
         </div>
 
-        {/* Tag Filters */}
-        {popularTags.length > 0 && (
+        {/* Category Filters */}
+        {availableCategories.length > 0 && (
           <div>
-            <div className="text-sm font-medium text-text-primary mb-2">Popular tags:</div>
+            <div className="text-sm font-medium text-text-primary mb-2">Filter by category:</div>
             <div className="flex flex-wrap gap-2">
-              {popularTags.map((tag) => (
+              {availableCategories.map((category) => (
                 <button
-                  key={tag}
-                  onClick={() => toggleTag(tag)}
+                  key={category.name}
+                  onClick={() => toggleCategory(category.name)}
                   className={`px-3 py-1 text-xs rounded-full transition-colors ${
-                    selectedTags.includes(tag)
+                    selectedCategories.includes(category.name)
                       ? 'bg-blue-600 text-white'
                       : 'bg-surface-tertiary text-text-secondary hover:bg-surface-hover'
                   }`}
                 >
-                  {tag} ({tagCounts[tag]})
+                  {category.name} ({category.count})
                 </button>
               ))}
             </div>
@@ -263,14 +288,51 @@ const WorkflowLibraryView = memo(({ onWorkflowSelect }: WorkflowLibraryViewProps
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredWorkflows.map((workflow) => (
-            <WorkflowCard
-              key={workflow.n8n_id}
-              workflow={workflow}
-              onSelect={onWorkflowSelect}
-            />
-          ))}
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {currentWorkflows.map((workflow) => (
+              <WorkflowCard
+                key={workflow.n8n_id}
+                workflow={workflow}
+                onSelect={onWorkflowSelect}
+              />
+            ))}
+          </div>
+          
+          {/* Pagination - always show if we have workflows */}
+          {filteredWorkflows.length > workflowsPerPage && (
+            <div className="flex items-center justify-between pt-4 border-t border-border-light">
+              <div className="text-sm text-text-secondary">
+                Showing {startIndex + 1}-{Math.min(endIndex, filteredWorkflows.length)} of {filteredWorkflows.length} workflows
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  variant="outline"
+                  size="sm"
+                >
+                  Previous
+                </Button>
+                <span className="text-sm text-text-secondary px-3">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  variant="outline"
+                  size="sm"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+          
+          {/* Debug info */}
+          <div className="text-xs text-text-secondary mt-2">
+            Debug: Total workflows: {workflows.length}, Filtered: {filteredWorkflows.length}, Current page: {currentPage}, Total pages: {totalPages}
+          </div>
         </div>
       )}
 

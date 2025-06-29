@@ -4,6 +4,7 @@ import { getConfigDefaults, PermissionTypes, Permissions } from 'librechat-data-
 import type { ContextType } from '~/common';
 import ModelSelector from './Menus/Endpoints/ModelSelector';
 import { PresetsMenu, HeaderNewChat, HeaderNewWorkflow, OpenSidebar } from './Menus';
+import WorkflowLibraryMenu from './Menus/WorkflowLibraryMenu';
 import { useGetStartupConfig } from '~/data-provider';
 import ExportAndShareMenu from './ExportAndShareMenu';
 import { useMediaQuery, useHasAccess } from '~/hooks';
@@ -57,6 +58,7 @@ export default function Header() {
           >
             <ModelSelector startupConfig={startupConfig} />
             {interfaceConfig.presets === true && interfaceConfig.modelSelect && <PresetsMenu />}
+            <WorkflowLibraryMenu />
             {hasAccessToBookmarks === true && <BookmarkMenu />}
             {hasAccessToMultiConvo === true && <AddMultiConvo />}
             {isSmallScreen && (

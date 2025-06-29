@@ -76,15 +76,16 @@ class IndexedTemplateService {
   /**
    * Get all templates (no category filter)
    */
-  async getAllTemplates(limit: number = 1000): Promise<Template[]> {
-    const cacheKey = `all_templates_${limit}`;
+  async getAllTemplates(limit?: number): Promise<Template[]> {
+    const cacheKey = limit ? `all_templates_${limit}` : 'all_templates';
     const cached = this.getFromCache(cacheKey);
     if (cached) return cached;
 
     try {
-      const params = new URLSearchParams({
-        limit: limit.toString()
-      });
+      const params = new URLSearchParams();
+      if (limit) {
+        params.set('limit', limit.toString());
+      }
 
       const response = await fetch(`${TEMPLATE_SYNC_URL}/templates/search?${params}`);
       const data = await response.json();

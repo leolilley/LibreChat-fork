@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
@@ -14,7 +14,6 @@ import ChatForm from '~/components/Chat/Input/ChatForm';
 import Landing from '~/components/Chat/Landing';
 import Header from '~/components/Chat/Header';
 import Footer from '~/components/Chat/Footer';
-import WorkflowAutomationPanel from './WorkflowAutomationPanel';
 import { buildTree, cn } from '~/utils';
 import { Spinner } from '~/components/svg';
 import store from '~/store';
@@ -68,37 +67,10 @@ function WorkflowChatView({ index = 0 }: { index?: number }) {
     content = <LoadingSpinner />;
   } else if ((isLoading || isNavigating) && !isLandingPage) {
     content = <LoadingSpinner />;
-  } else if (!isLandingPage) {
-    // Show automation panel with conversation sidebar
-    content = (
-      <div className="flex h-full">
-        <div className="flex-1">
-          <WorkflowAutomationPanel />
-        </div>
-        {/* Show recent messages in a sidebar */}
-        {messagesTree && messagesTree.length > 0 && (
-          <div className="w-80 border-l border-border-light bg-surface-secondary p-4 overflow-y-auto">
-            <h3 className="font-medium text-text-primary mb-3">Conversation</h3>
-            <div className="space-y-2 text-sm">
-              {messagesTree.slice(-3).map((message, index) => (
-                <div key={message.messageId || index} className="p-2 rounded bg-surface-primary">
-                  <div className="font-medium text-xs text-text-secondary mb-1">
-                    {message.isCreatedByUser ? 'You' : 'Assistant'}
-                  </div>
-                  <div className="text-text-primary">
-                    {message.text?.slice(0, 150)}
-                    {message.text && message.text.length > 150 && '...'}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
+  } else if (isLandingPage) {
+    content = <Landing header="Start a Workflow Chat" />;
   } else {
-    // Landing page - show automation panel
-    content = <WorkflowAutomationPanel />;
+    content = <MessagesView messagesTree={messagesTree} setIsSubmitting={() => {}} />;
   }
 
   return (
@@ -115,11 +87,21 @@ function WorkflowChatView({ index = 0 }: { index?: number }) {
                   className={cn(
                     'flex flex-col',
                     isLandingPage
-                      ? 'flex-1'
+                      ? 'flex-1 items-center justify-end sm:justify-center'
                       : 'h-full overflow-y-auto',
                   )}
                 >
                   {content}
+                  <div
+                    className={cn(
+                      'w-full',
+                      isLandingPage && centerFormOnLanding
+                        ? 'max-w-3xl transition-all duration-200 xl:max-w-4xl'
+                        : '',
+                    )}
+                  >
+                    <ChatForm index={index} />
+                  </div>
                 </div>
               </>
               <Footer />

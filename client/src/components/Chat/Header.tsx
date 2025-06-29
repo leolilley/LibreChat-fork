@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { getConfigDefaults, PermissionTypes, Permissions } from 'librechat-data-provider';
 import type { ContextType } from '~/common';
 import ModelSelector from './Menus/Endpoints/ModelSelector';
-import { PresetsMenu, HeaderNewChat, OpenSidebar } from './Menus';
+import { PresetsMenu, HeaderNewChat, HeaderNewWorkflow, OpenSidebar } from './Menus';
 import { useGetStartupConfig } from '~/data-provider';
 import ExportAndShareMenu from './ExportAndShareMenu';
 import { useMediaQuery, useHasAccess } from '~/hooks';
@@ -48,11 +48,12 @@ export default function Header() {
           >
             <OpenSidebar setNavVisible={setNavVisible} />
             <HeaderNewChat />
+            <HeaderNewWorkflow />
           </div>
           <div
             className={`flex items-center gap-2 ${
               !isSmallScreen ? 'transition-all duration-200 ease-in-out' : ''
-            } ${!navVisible ? 'translate-x-0' : 'translate-x-[-100px]'}`}
+            } ${!navVisible ? 'translate-x-0' : 'translate-x-[-148px]'}`}
           >
             <ModelSelector startupConfig={startupConfig} />
             {interfaceConfig.presets === true && interfaceConfig.modelSelect && <PresetsMenu />}

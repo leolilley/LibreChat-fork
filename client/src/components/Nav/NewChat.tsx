@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys, Constants } from 'librechat-data-provider';
 import type { TMessage, TStartupConfig } from 'librechat-data-provider';
-import { NewChatIcon, MobileSidebar, Sidebar } from '~/components/svg';
+import { NewChatIcon, WorkflowIcon, MobileSidebar, Sidebar } from '~/components/svg';
 import { getDefaultModelSpec, getModelSpecPreset } from '~/utils';
 import { TooltipAnchor, Button } from '~/components/ui';
 import { useLocalize, useNewConvo } from '~/hooks';
@@ -50,6 +50,26 @@ export default function NewChat({
     [queryClient, conversation, newConvo, navigate, toggleNav, isSmallScreen],
   );
 
+  const workflowClickHandler: React.MouseEventHandler<HTMLButtonElement> = useCallback(
+    (e) => {
+      if (e.button === 0 && (e.ctrlKey || e.metaKey)) {
+        window.open('/w/new', '_blank');
+        return;
+      }
+      queryClient.setQueryData<TMessage[]>(
+        [QueryKeys.messages, conversation?.conversationId ?? Constants.NEW_CONVO],
+        [],
+      );
+      queryClient.invalidateQueries([QueryKeys.messages]);
+      newConvo();
+      navigate('/w/new', { state: { focusWorkflow: true } });
+      if (isSmallScreen) {
+        toggleNav();
+      }
+    },
+    [queryClient, conversation, newConvo, navigate, toggleNav, isSmallScreen],
+  );
+
   return (
     <>
       <div className="flex items-center justify-between py-[2px] md:py-2">
@@ -69,7 +89,7 @@ export default function NewChat({
             </Button>
           }
         />
-        <div className="flex">
+        <div className="flex gap-1">
           {headerButtons}
           <TooltipAnchor
             description={localize('com_ui_new_chat')}
@@ -83,6 +103,21 @@ export default function NewChat({
                 onClick={clickHandler}
               >
                 <NewChatIcon className="icon-md md:h-6 md:w-6" />
+              </Button>
+            }
+          />
+          <TooltipAnchor
+            description={localize('com_ui_new_workflow')}
+            render={
+              <Button
+                size="icon"
+                variant="outline"
+                data-testid="nav-new-workflow-button"
+                aria-label={localize('com_ui_new_workflow')}
+                className="rounded-full border-none bg-transparent p-2 hover:bg-surface-hover md:rounded-xl"
+                onClick={workflowClickHandler}
+              >
+                <WorkflowIcon className="icon-md md:h-6 md:w-6" />
               </Button>
             }
           />

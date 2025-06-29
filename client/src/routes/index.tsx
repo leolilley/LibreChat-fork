@@ -16,6 +16,7 @@ import LoginLayout from './Layouts/Login';
 import dashboardRoutes from './Dashboard';
 import ShareRoute from './ShareRoute';
 import ChatRoute from './ChatRoute';
+import WorkflowChatRoute from './WorkflowChatRoute';
 import Search from './Search';
 import Root from './Root';
 import DemoWrapper from '~/components/Demo/DemoWrapper';
@@ -106,6 +107,10 @@ export const router = createBrowserRouter([
           {
             path: 'c/:conversationId?',
             element: <ChatRoute />,
+          },
+          {
+            path: 'w/:conversationId?',
+            element: <WorkflowChatRoute />,
           },
           {
             path: 'search',

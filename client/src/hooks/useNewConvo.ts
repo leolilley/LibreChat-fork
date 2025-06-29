@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useGetModelsQuery } from 'librechat-data-provider/react-query';
 import {
   Constants,
@@ -35,6 +35,7 @@ import store from '~/store';
 
 const useNewConvo = (index = 0) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const { data: startupConfig } = useGetStartupConfig();
   const clearAllConversations = store.useClearConvoState();
@@ -187,24 +188,29 @@ const useNewConvo = (index = 0) => {
 
         const searchParamsString = searchParams?.toString();
         const getParams = () => (searchParamsString ? `?${searchParamsString}` : '');
+        
+        // Determine if we're in workflow context based on current path
+        const isWorkflowContext = location.pathname.startsWith('/w/');
+        const pathPrefix = isWorkflowContext ? '/w/' : '/c/';
+        const focusState = isWorkflowContext ? { focusWorkflow: true } : { focusChat: true };
 
         if (conversation.conversationId === Constants.NEW_CONVO && !modelsData) {
           const appTitle = localStorage.getItem(LocalStorageKeys.APP_TITLE) ?? '';
           if (appTitle) {
             document.title = appTitle;
           }
-          const path = `/c/${Constants.NEW_CONVO}${getParams()}`;
-          navigate(path, { state: { focusChat: true } });
+          const path = `${pathPrefix}${Constants.NEW_CONVO}${getParams()}`;
+          navigate(path, { state: focusState });
           return;
         }
 
-        const path = `/c/${conversation.conversationId}${getParams()}`;
+        const path = `${pathPrefix}${conversation.conversationId}${getParams()}`;
         navigate(path, {
           replace: true,
-          state: disableFocus ? {} : { focusChat: true },
+          state: disableFocus ? {} : focusState,
         });
       },
-    [endpointsConfig, defaultPreset, assistantsListMap, modelsQuery.data],
+    [endpointsConfig, defaultPreset, assistantsListMap, modelsQuery.data, location.pathname],
   );
 
   const newConversation = useCallback(

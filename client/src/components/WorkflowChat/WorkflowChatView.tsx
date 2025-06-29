@@ -1,0 +1,131 @@
+import { memo, useCallback, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import { Constants } from 'librechat-data-provider';
+import type { TMessage } from 'librechat-data-provider';
+import type { ChatFormValues } from '~/common';
+import { ChatContext, AddedChatContext, useFileMapContext, ChatFormProvider } from '~/Providers';
+import { useChatHelpers, useAddedResponse, useSSE } from '~/hooks';
+import { useGetMessagesByConvoId } from '~/data-provider';
+import MessagesView from '~/components/Chat/Messages/MessagesView';
+import Presentation from '~/components/Chat/Presentation';
+import ChatForm from '~/components/Chat/Input/ChatForm';
+import Landing from '~/components/Chat/Landing';
+import Header from '~/components/Chat/Header';
+import Footer from '~/components/Chat/Footer';
+import { buildTree, cn } from '~/utils';
+import { Spinner } from '~/components/svg';
+import store from '~/store';
+
+function LoadingSpinner() {
+  return (
+    <div className="relative flex-1 overflow-hidden overflow-y-auto">
+      <div className="relative flex h-full items-center justify-center">
+        <Spinner className="text-text-primary" />
+      </div>
+    </div>
+  );
+}
+
+function WorkflowChatView({ index = 0 }: { index?: number }) {
+  const { conversationId } = useParams();
+  const rootSubmission = useRecoilValue(store.submissionByIndex(index));
+  const addedSubmission = useRecoilValue(store.submissionByIndex(index + 1));
+  const centerFormOnLanding = useRecoilValue(store.centerFormOnLanding);
+
+  const fileMap = useFileMapContext();
+
+  const { data: messagesTree = null, isLoading } = useGetMessagesByConvoId(conversationId ?? '', {
+    select: useCallback(
+      (data: TMessage[]) => {
+        const dataTree = buildTree({ messages: data, fileMap });
+        return dataTree?.length === 0 ? null : (dataTree ?? null);
+      },
+      [fileMap],
+    ),
+    enabled: !!fileMap,
+  });
+
+  const chatHelpers = useChatHelpers(index, conversationId);
+  const addedChatHelpers = useAddedResponse({ rootIndex: index });
+
+  useSSE(rootSubmission, chatHelpers, false);
+  useSSE(addedSubmission, addedChatHelpers, true);
+
+  const methods = useForm<ChatFormValues>({
+    defaultValues: { text: '' },
+  });
+
+  let content: JSX.Element | null | undefined;
+  const isLandingPage =
+    (!messagesTree || messagesTree.length === 0) &&
+    (conversationId === Constants.NEW_CONVO || !conversationId);
+  const isNavigating = (!messagesTree || messagesTree.length === 0) && conversationId != null;
+
+  if (isLoading && conversationId !== Constants.NEW_CONVO) {
+    content = <LoadingSpinner />;
+  } else if ((isLoading || isNavigating) && !isLandingPage) {
+    content = <LoadingSpinner />;
+  } else if (!isLandingPage) {
+    content = <MessagesView messagesTree={messagesTree} />;
+  } else {
+    // For now, show a simple landing message - we'll enhance this in Phase 2
+    content = (
+      <div className="flex flex-1 items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-semibold mb-4">Workflow Chat</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">
+            Welcome to Workflow Chat! This is a placeholder for the automation interface.
+          </p>
+          <div className="bg-surface-primary-alt p-6 rounded-lg">
+            <h2 className="text-lg font-medium mb-4">Coming Soon:</h2>
+            <ul className="text-left space-y-2">
+              <li>• Button-based workflow automation</li>
+              <li>• n8n workflow integration</li>
+              <li>• Smart parameter collection</li>
+              <li>• Real-time execution progress</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <ChatFormProvider {...methods}>
+      <ChatContext.Provider value={chatHelpers}>
+        <AddedChatContext.Provider value={addedChatHelpers}>
+          <Presentation>
+            <div className="flex h-full w-full flex-col">
+              {!isLoading && <Header />}
+              <>
+                <div
+                  className={cn(
+                    'flex flex-col',
+                    isLandingPage
+                      ? 'flex-1 items-center justify-end sm:justify-center'
+                      : 'h-full overflow-y-auto',
+                  )}
+                >
+                  {content}
+                  <div
+                    className={cn(
+                      'w-full',
+                      isLandingPage && 'max-w-3xl transition-all duration-200 xl:max-w-4xl',
+                    )}
+                  >
+                    <ChatForm index={index} />
+                  </div>
+                </div>
+              </>
+              <Footer />
+            </div>
+          </Presentation>
+        </AddedChatContext.Provider>
+      </ChatContext.Provider>
+    </ChatFormProvider>
+  );
+}
+
+export default memo(WorkflowChatView);

@@ -18,12 +18,18 @@ const TemplateCard = memo(({
 }: { 
   template: Template; 
   onSelect: (template: Template) => void;
-}) => (
-  <Button
-    variant="outline"
-    onClick={() => onSelect(template)}
-    className="h-auto flex-col items-start p-4 text-left hover:bg-surface-hover transition-colors group"
-  >
+}) => {
+  const handleClick = () => {
+    window.open(`https://n8n.io/workflows/${template.n8n_id}/`, '_blank');
+  };
+
+  return (
+    <Button
+      variant="outline"
+      onClick={handleClick}
+      className="h-auto flex-col items-start p-4 text-left hover:bg-surface-hover transition-colors group"
+      title="Click to view template on n8n.io"
+    >
     <div className="flex items-start justify-between w-full mb-2">
       <h3 className="font-medium text-text-primary group-hover:text-text-primary text-sm font-semibold">
         {template.name}
@@ -59,7 +65,8 @@ const TemplateCard = memo(({
       </div>
     )}
   </Button>
-));
+  );
+});
 
 TemplateCard.displayName = 'TemplateCard';
 

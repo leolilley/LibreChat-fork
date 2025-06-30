@@ -16,20 +16,26 @@ const WorkflowCard = memo(({
 }: { 
   workflow: Template; 
   onSelect: (workflow: Template) => void;
-}) => (
-  <div className="border border-border-light rounded-lg p-4 hover:bg-surface-hover transition-colors group cursor-pointer"
-       onClick={() => onSelect(workflow)}>
-    <div className="flex items-start justify-between mb-2">
-      <h3 className="font-medium text-text-primary text-sm group-hover:text-blue-600 transition-colors">
-        {workflow.name}
-      </h3>
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-text-secondary">⚙️ {workflow.node_count}</span>
-        <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full dark:bg-green-900 dark:text-green-300">
-          Available
-        </span>
+}) => {
+  const handleClick = () => {
+    window.open(`https://n8n.io/workflows/${workflow.n8n_id}/`, '_blank');
+  };
+
+  return (
+    <div className="border border-border-light rounded-lg p-4 hover:bg-surface-hover transition-colors group cursor-pointer"
+         onClick={handleClick}
+         title="Click to view template on n8n.io">
+      <div className="flex items-start justify-between mb-2">
+        <h3 className="font-medium text-text-primary text-sm group-hover:text-blue-600 transition-colors">
+          {workflow.name}
+        </h3>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-text-secondary">⚙️ {workflow.node_count}</span>
+          <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full dark:bg-green-900 dark:text-green-300">
+            Available
+          </span>
+        </div>
       </div>
-    </div>
     
     <p className="text-text-secondary text-xs leading-relaxed mb-3 line-clamp-2">
       {workflow.description}
@@ -62,7 +68,8 @@ const WorkflowCard = memo(({
       )}
     </div>
   </div>
-));
+  );
+});
 
 WorkflowCard.displayName = 'WorkflowCard';
 

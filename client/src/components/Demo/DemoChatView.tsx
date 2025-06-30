@@ -9,8 +9,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { Constants } from 'librechat-data-provider';
-import { Sidebar, NewChatIcon, AttachmentIcon, SendIcon } from '~/components/svg';
-import MCPIcon from '~/components/ui/MCPIcon';
+import { Sidebar, NewChatIcon, AttachmentIcon, SendIcon, MCPIcon } from '~/components/svg';
 import { TooltipAnchor, Button, TextareaAutosize } from '~/components/ui';
 import { useLocalize } from '~/hooks';
 import { useGetStartupConfig } from '~/data-provider';

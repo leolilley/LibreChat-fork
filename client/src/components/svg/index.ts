@@ -63,3 +63,5 @@ export { default as ThumbDownIcon } from './ThumbDownIcon';
 export { default as XAIcon } from './XAIcon';
 export { default as PersonalizationIcon } from './PersonalizationIcon';
 export { default as WorkflowIcon } from './WorkflowIcon';
+export { default as MCPIcon } from './MCPIcon';
+export { default as VectorIcon } from './VectorIcon';

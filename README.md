@@ -3,9 +3,109 @@
     <img src="client/public/assets/logo.svg" height="256">
   </a>
   <h1 align="center">
-    <a href="https://librechat.ai">LibreChat</a>
+    <a href="https://librechat.ai">LibreChat</a> - Agent Kiwi Fork
   </h1>
 </p>
+
+# 🥝 Agent Kiwi - LibreChat + n8n Workflow Automation
+
+> **This is a specialized fork of LibreChat** that integrates with n8n workflows to create **Agent Kiwi** - a "package manager for business automations". This fork combines the power of LibreChat's AI chat interface with n8n's workflow automation capabilities through Model Context Protocol (MCP) integration.
+
+## 🔗 **What's Different in This Fork**
+
+### 🤖 **Workflow Chat System**
+- **Button-First Interface**: Execute n8n workflows through intuitive UI buttons rather than complex prompts
+- **Dual Navigation**: Both regular chat (`/c/`) and workflow chat (`/w/`) modes
+- **n8n Template Library**: Access to 2990+ free n8n workflow templates
+- **Dynamic Categories**: Business-friendly categories (AI, Marketing, Sales, HR, etc.)
+
+### 🔧 **n8n Integration Features**
+- **MCP Integration**: n8n workflows exposed as Model Context Protocol tools
+- **Template Sync Service**: Dedicated microservice for indexing and managing n8n templates
+- **Workflow Execution**: Direct execution of n8n automations from chat interface
+- **Business Automation Focus**: Curated templates for common business use cases
+
+### 📦 **Agent Kiwi Ecosystem**
+- **Community-Driven**: Open-source automation sharing and collaboration
+- **Template Packages**: Organized collections of related workflows
+- **Easy Deployment**: Docker-based setup with unified CLI tooling
+- **Scalable Architecture**: Production-ready with MongoDB, Redis, and Meilisearch
+
+## 🚀 **Getting Started with Agent Kiwi**
+
+```bash
+# Clone the Agent Kiwi repository
+git clone https://github.com/leolilley/agent-kiwi.git
+cd agent-kiwi
+
+# Setup development environment
+./scripts/agent-kiwi.sh dev-setup
+
+# Start the full stack (LibreChat + n8n + services)
+docker compose -f docker-compose.dev.yml up -d
+
+# Access the applications
+# LibreChat: http://localhost:3080
+# n8n: http://localhost:5678
+```
+
+## 🎯 **Use Cases**
+
+- **Marketing Automation**: Lead generation, email campaigns, social media management
+- **Sales Workflows**: CRM automation, pipeline management, customer onboarding  
+- **HR Processes**: Employee onboarding, leave management, performance tracking
+- **Data Processing**: Report generation, data synchronization, API integrations
+- **Customer Service**: Ticket routing, automated responses, feedback collection
+
+## 🏗️ **Architecture**
+
+This fork maintains full compatibility with upstream LibreChat while adding:
+- **Workflow Components**: Isolated in `components/WorkflowChat/` 
+- **MCP Server**: n8n integration layer
+- **Template Service**: Microservice for template management
+- **Enhanced Routing**: Workflow-specific navigation and state management
+
+## 📋 **Implementation Status**
+
+### ✅ **Completed**
+- [x] Workflow Chat Navigation & UI Components
+- [x] n8n Template Library Integration (2990+ templates)
+- [x] Business-Friendly Category Mapping
+- [x] Dual Navigation System (`/c/` chat, `/w/` workflows)
+- [x] Template Selection & Browsing Interface
+- [x] Updated to LibreChat v0.7.8
+
+### 🚧 **In Progress**
+- [ ] Template Sync Microservice (Docker-based)
+- [ ] MongoDB Schema for Template Storage
+- [ ] MCP Server Implementation for n8n
+- [ ] Workflow Execution Engine
+
+### 📋 **Planned**
+- [ ] One-Click Workflow Deployment
+- [ ] Custom Workflow Creation Interface
+- [ ] Community Template Sharing
+- [ ] Advanced Workflow Chaining
+- [ ] GCP Production Deployment
+
+## 🤝 **Contributing**
+
+This is an active fork that stays up-to-date with upstream LibreChat. To contribute:
+
+1. **Fork Development**: All workflow features are isolated to prevent conflicts with upstream
+2. **Regular Updates**: We merge upstream changes regularly while preserving our enhancements
+3. **Safe Architecture**: Zero modifications to core LibreChat functionality
+
+**Related Repositories:**
+- **Main Project**: [Agent Kiwi](https://github.com/leolilley/agent-kiwi) 
+- **This Fork**: [LibreChat-fork](https://github.com/leolilley/LibreChat-fork)
+- **Upstream**: [Original LibreChat](https://github.com/danny-avila/LibreChat)
+
+---
+
+# 📖 **Original LibreChat Documentation**
+
+*Below is the original LibreChat README content. All LibreChat features remain fully functional in this fork.*
 
 <p align="center">
   <a href="https://discord.librechat.ai"> 
